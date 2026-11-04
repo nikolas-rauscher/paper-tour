@@ -8,15 +8,25 @@ import { HarnessTourGenerator } from '../src/harness/generator';
 import { config as loadConfig } from '../src/config';
 
 test('new tour configuration defaults to the SDK agent with an explicit legacy opt-out', () => {
-  const previous = process.env.PAPER_AGENT_ENABLED;
+  const fixture = {
+    DATABASE_URL: 'postgresql://localhost/unit-test',
+    SUPABASE_URL: 'http://127.0.0.1:54321',
+    SUPABASE_SERVICE_ROLE_KEY: 'unit-test-service-key',
+  };
+  const previous = new Map(
+    [...Object.keys(fixture), 'PAPER_AGENT_ENABLED'].map((name) => [name, process.env[name]]),
+  );
   try {
+    Object.assign(process.env, fixture);
     delete process.env.PAPER_AGENT_ENABLED;
     assert.equal(loadConfig().agent?.enabled, true);
     process.env.PAPER_AGENT_ENABLED = 'false';
     assert.equal(loadConfig().agent?.enabled, false);
   } finally {
-    if (previous === undefined) delete process.env.PAPER_AGENT_ENABLED;
-    else process.env.PAPER_AGENT_ENABLED = previous;
+    for (const [name, value] of previous) {
+      if (value === undefined) delete process.env[name];
+      else process.env[name] = value;
+    }
   }
 });
 

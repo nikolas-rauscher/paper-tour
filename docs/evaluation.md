@@ -81,3 +81,9 @@ What the numbers say, and what they do not:
 
 To score a new guided-harness run, use `server/run-tour.ts` as described in [Development](development.md#standalone-guided-harness), then run `node scripts/scorecard.mjs <tour-folder>` from the repository root. This does not reproduce the original measurements or evaluate the default persistent agent.
 It looks up `doc.json` in `.data/documents/<folder name>`; `--docs <dir>` changes that, and `--json` prints the numbers as JSON.
+
+## Related recorded experiments
+
+The original October model notes recorded a SAM selection spike with 42 of 46 accepted snaps across 23 selected objects and a median reported latency of 1.2 seconds. They also recorded a small Muse Wonder versus Spark planning experiment that kept Spark as the default. These are historical observations from a small selection of documents, not a reproducible current benchmark; raw provider/run artifacts are not included here.
+
+Current model availability comes from the connected account's catalog. Historical prices and model timing in this page should not be used as a live quote.

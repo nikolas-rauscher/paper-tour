@@ -204,7 +204,7 @@ const atMost = (effort: Effort, cap: Effort): Effort =>
   EFFORTS[Math.min(EFFORTS.indexOf(effort), EFFORTS.indexOf(cap))];
 
 /**
- * Short tours of a document's main ideas (notes/HARNESS.md): understand the document once and say what kind it is
+ * Short tours of a document's main ideas (docs/architecture.md): understand the document once and say what kind it is
  * (stage A), plan beats for that kind by preset (B: in code for a paper or an exercise sheet, with one call for the
  * other kinds), direct every beat in parallel with enum-constrained targets, or solve and check an exercise part (C),
  * assemble and validate in code (F).

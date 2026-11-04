@@ -2,7 +2,7 @@ import { execFile } from 'node:child_process';
 import { resolve } from 'node:path';
 import { ROOT } from '../config';
 
-// Checks the lines of a worked solution in code, not by the model that wrote them (notes/HARNESS.md, rule 7):
+// Checks the lines of a worked solution in code, not by the model that wrote them (docs/architecture.md, rule 7):
 // ingest/verify_math.py evaluates each line numerically and says ok, failed (with the reason) or unknown.
 
 export type LineStatus = 'ok' | 'failed' | 'unknown';

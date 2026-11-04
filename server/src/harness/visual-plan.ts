@@ -5,7 +5,7 @@ import type { PaperCard } from './card';
 import { unitTaskLines } from './unit-task';
 import { baseRowName, gridOf, resultTable, tableText, tableViews, type TableView } from './tables';
 
-// The tour's visual plan (notes/VISUALS-V2.md): one call after the beats are planned and before they are directed.
+// The tour's visual plan (docs/visuals.md): one call after the beats are planned and before they are directed.
 // It sees the whole document card and every beat, so it can give each step the visual that makes its point click, and
 // give no two steps the same picture. Code checks the plan; a step's direction then offers only its planned board.
 

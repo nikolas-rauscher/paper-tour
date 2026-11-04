@@ -46,7 +46,7 @@ Generation uses document text and rendered images in provider requests. Live gen
 
 Browser voices require no speech-provider setup. On supported Apple silicon Macs, `npm run setup:siri` installs the local Siri CLI and downloads missing voices. Setup and the first API start may trigger this automatically unless disabled; set `SIRI_TTS_AUTO_SETUP=false` in the root `.env` to disable automatic setup. `--skip-siri` skips only the setup helper's installation step.
 
-ElevenLabs and OpenAI are optional, explicitly selected providers. See [Speech providers](../notes/SPEECH-PROVIDERS.md) for credentials, alignment, caching and limitations. Available voices depend on the selected provider and local installation.
+ElevenLabs and OpenAI are optional, explicitly selected providers. See [Reading and audio](reading-and-audio.md) for credentials, alignment, caching and limitations. Available voices depend on the selected provider and local installation.
 
 ### Diagnostics
 
@@ -59,6 +59,8 @@ npm run build
 npm test
 npm run test:integration
 ```
+
+The [CI workflow](../.github/workflows/ci.yml) installs Node, Python and Tesseract, then runs the build and unit suites without provider keys. Database-backed tests are skipped without `TEST_DATABASE_URL`.
 
 `npm test` expects the Python environment at `ingest/.venv`. The integration suite needs local Supabase and its configured test environment. Inspect `scripts/test-integration.mjs` for its service setup.
 
@@ -88,7 +90,7 @@ From the repository root, inspect the resulting run with:
 node scripts/scorecard.mjs .data/runs/mydoc
 ```
 
-The script reads saved artifacts and makes no provider calls. See [recorded evaluation](evaluation.md) for the older measurements and their limitations. Other ingestion utilities include `validate.py`, `outline.py`, `check_tour.py` and the [local document workflows](../notes/LOCAL-WORKFLOWS.md).
+The script reads saved artifacts and makes no provider calls. See [recorded evaluation](evaluation.md) for the older measurements and their limitations. Other ingestion utilities include `validate.py`, `outline.py`, `check_tour.py` and the [local PDF workflows](document-workflows.md).
 
 ## Docker deployment
 
@@ -100,4 +102,4 @@ Configure `.env` from `.env.example`, including the deployed app's origin and pu
 docker compose up --build
 ```
 
-Compose serves the application on port 3001. For Supabase running on the host, set `DOCKER_DATABASE_URL` and `DOCKER_SUPABASE_URL` to addresses reachable from containers; loopback addresses inside a container refer to that container. Apply migrations against the intended database before starting the application. This cleanup has not tested a fresh Docker deployment.
+Compose serves the application on port 3001. For Supabase running on the host, set `DOCKER_DATABASE_URL` and `DOCKER_SUPABASE_URL` to addresses reachable from containers; loopback addresses inside a container refer to that container. Apply migrations against the intended database before starting the application. The Compose file does not provision the Supabase services themselves.

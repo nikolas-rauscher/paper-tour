@@ -20,3 +20,9 @@ supabase/.branches/
 # Retired demo assets and local experiment responses. Store new runs under .data/.
 /demo/
 /server/kinds-*.json
+
+# Personal development clients and local task artifacts.
+.codex/
+.agents/
+openscreen-demo-plan.md
+skills-lock.json

@@ -8,7 +8,7 @@ import { BOARD_TASK } from './prompts';
 import { visualLine, type StepVisual } from './visual-plan';
 import { groundedCheck } from './visual-rules';
 
-// The side-board visual of an exercise part (notes/VISUALS-V2.md): the sheet's visual plan gives a task at most one,
+// The side-board visual of an exercise part (docs/visuals.md): the sheet's visual plan gives a task at most one,
 // chosen for the method it teaches (a grid of natural frequencies, a matrix and its shape, a point in the plane, the graph
 // of a function). One call draws it after the part is solved, so that it fits the solution; the solution lines stay
 // formula boards. The learner has tried the task by the time the board appears (it comes with the method, after the

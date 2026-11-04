@@ -63,7 +63,7 @@ unless `persist` is set; `clear` removes persistent ones.
 | `timeline` | Dated or ordered events, spans and deadlines on one axis; the code resolves relative dates such as "14 days after the notice" and checks span lengths | event, span |
 | `distribution` | One or two distributions from parameters or document counts, morphing from one to the other; the probability of a shaded region is computed by code | dist, region |
 
-Narration uses the selected speech provider or pre-rendered step `audio` with optional per-word timings. See [speech providers](../notes/SPEECH-PROVIDERS.md).
+Narration uses the selected speech provider or pre-rendered step `audio` with optional per-word timings. See [Reading and audio](reading-and-audio.md).
 
 
-Agent-authored `program` and `plotly` visuals extend the native board catalog. See [Live visuals](../notes/LIVE-VISUALS.md) for their execution and validation contracts. The schemas in [`schema/`](../schema/) and shared TypeScript types in [`shared/`](../shared/) define the accepted formats.
+Agent-authored `program` and `plotly` visuals extend the native board catalog. See [Visual explanations](visuals.md) for their execution and validation contracts. The schemas in [`schema/`](../schema/) and shared TypeScript types in [`shared/`](../shared/) define the accepted formats.

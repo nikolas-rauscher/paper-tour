@@ -19,7 +19,7 @@ import type { UnitVisual } from './exercise-visual';
 import { unitTaskLines } from './unit-task';
 import type { LineCheck } from './verify';
 
-// The tutor for exercise sheets (notes/HARNESS.md, "Tutor"): each taught part gets one solve call that reads the task,
+// The tutor for exercise sheets (docs/architecture.md, "Tutor"): each taught part gets one solve call that reads the task,
 // names the method and writes the solution as lines of maths; code checks the lines' LaTeX and their maths, and turns
 // the part into steps: the task (givens and question highlighted), the method, one board line per solution step built
 // term by term, and the answer. When the tour is tight, the method joins the first solution line and the answer the last

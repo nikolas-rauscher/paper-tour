@@ -1,0 +1,53 @@
+name: Build and test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SIRI_TTS_AUTO_SETUP: 'false'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            server/package-lock.json
+            player/package-lock.json
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: ingest/requirements.txt
+      - name: Install OCR dependency
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y tesseract-ocr
+      - name: Install JavaScript dependencies
+        run: |
+          npm ci
+          npm --prefix server ci
+          npm --prefix player ci
+      - name: Install Python dependencies
+        run: |
+          python -m venv ingest/.venv
+          ingest/.venv/bin/pip install -r ingest/requirements.txt
+      - name: Build
+        run: npm run build
+      - name: Unit tests
+        run: npm test

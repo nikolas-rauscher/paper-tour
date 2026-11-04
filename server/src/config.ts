@@ -26,7 +26,7 @@ export interface Config {
   maxPages: number;
   analysisTimeoutMs: number;
   muse: MuseConfig;
-  /** Guided tour length (notes/HARNESS.md); persistent agents are configured separately. */
+  /** Guided tour length (docs/architecture.md); persistent agents are configured separately. */
   tours: { preset: 'quick' | 'standard' | 'deep' };
   agent?: { enabled: boolean; maxTurns: number; maxOutputTokens: number; maxRuntimeMs: number };
 }

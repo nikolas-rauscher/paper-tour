@@ -17,7 +17,7 @@ import {
 import { HarnessTourGenerator } from './harness-fixture';
 import { card, direct, doc as base, images, planFor, provider, settings, type Request } from './plan-fixture';
 
-// A results step that stands on a table with ready boards draws the table's own numbers (notes/VISUALS-V2.md): the visual
+// A results step that stands on a table with ready boards draws the table's own numbers (docs/visuals.md): the visual
 // plan gives at least one such step a board of the document's real values, within the variety limits, and the step's
 // direction is briefed with the table the plan named.
 
