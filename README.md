@@ -8,7 +8,44 @@ Upload a PDF, choose how you want it taught, and start a guided tour. Pause to a
 
 [Get started](#run-locally) · [Architecture](docs/architecture.md) · [Development](docs/development.md)
 
-![Paper Tour showing a guided explanation with source highlighting and playback controls](docs/images/guided-tour.png)
+## Demo: a paper explained on the page
+
+A guided tour of loss-free load balancing for mixture-of-experts models: follow the source, inspect reported results, and explore illustrative constructions beside the PDF. The screenshots distinguish paper measurements from illustrative examples.
+
+Click a screenshot to open it at full size.
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="docs/images/expert-selection.png"><img src="docs/images/expert-selection.png" width="360" alt="An illustrative expert-selection example beside the source algorithm, with an adjustable bias parameter"></a><br>
+      <sub>Interactive expert selection</sub>
+    </td>
+    <td align="center">
+      <a href="docs/images/balancing-tradeoff.png"><img src="docs/images/balancing-tradeoff.png" width="360" alt="The source loss equation beside an illustrative load-balance and model-cost plot"></a><br>
+      <sub>Illustrative trade-off</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="docs/images/paper-results.png"><img src="docs/images/paper-results.png" width="360" alt="Highlighted source text and a scatter plot comparing reported perplexity and load imbalance"></a><br>
+      <sub>Results from the paper</sub>
+    </td>
+    <td align="center">
+      <a href="docs/images/table-spotlight.png"><img src="docs/images/table-spotlight.png" width="360" alt="A source comparison table isolated with a spotlight while the companion explains it"></a><br>
+      <sub>Source table spotlight</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="docs/images/figure-annotations.png"><img src="docs/images/figure-annotations.png" width="360" alt="Source charts annotated around the legend and computation batch-size labels"></a><br>
+      <sub>Figure annotations</sub>
+    </td>
+    <td align="center">
+      <a href="docs/images/bias-feedback.png"><img src="docs/images/bias-feedback.png" width="360" alt="Tour navigation alongside the source algorithm and an illustrative expert-load feedback construction"></a><br>
+      <sub>Tour contents and bias feedback</sub>
+    </td>
+  </tr>
+</table>
 
 ## Read it. Hear it. Work through it.
 

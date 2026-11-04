@@ -16,6 +16,6 @@ Optional interface sounds default off and unlock after interaction. They stop wh
 
 ## Assets and attribution
 
-The README's [guided-tour screenshot](images/guided-tour.png) was captured from an earlier working reader build. It shows source highlighting and playback; individual controls may differ from the current interface.
+The [README demo gallery](../README.md#demo-a-paper-explained-on-the-page) shows source highlighting, table spotlights, figure annotations, reported results and illustrative constructions from a guided paper tour. Gallery thumbnails link to the original screenshots. Constructions labelled illustrative are explanatory examples rather than measured paper results.
 
 Adapted UI components retain their notices under [`ui/vendor/`](../player/src/ui/vendor/). See [Credits](credits.md) for attribution. Component registry configuration in `player/components.json` is optional development tooling, not a runtime service dependency.
