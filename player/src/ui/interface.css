@@ -859,3 +859,6 @@ button.ui-status-badge:hover {
 /* Measured settings content contains its margins and leaves room for focus outlines. */
 .ui-settings-auto-height { margin-inline: -4px; padding-inline: 4px; }
 .ui-settings-auto-height > div { display: flow-root; }
+
+.library-card-tilt { position: relative; width: 100%; min-width: 0; }
+.library-card-tilt:is(:hover, :focus-within) { z-index: 1; }

@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/brand/banner.png" alt="Paper Tour: any document, explained on the page." width="100%">
+</p>
+
 # Paper Tour
 
 **A document tutor that points, draws, and explains.**

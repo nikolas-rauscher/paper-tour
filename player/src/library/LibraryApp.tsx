@@ -1,3 +1,4 @@
+import { Tilt, TiltContent } from '@animate-ui/react/primitives/effects/tilt';
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { DocumentSummary } from '../../../shared/contracts';
 import { AuthForm, PaperMark } from './AuthForm';
@@ -473,82 +474,91 @@ function DocumentCard({
   const canOpen = item.fileStatus === 'uploaded';
   const analysisReady = item.analysisStatus === 'ready' || item.analysisStatus === 'limited';
   return (
-    <article className="library-document">
-      <button
-        type="button"
-        className="library-preview"
-        onClick={onOpen}
-        disabled={!canOpen}
-        aria-label={`Open ${item.title}`}
-      >
-        {item.thumbnailUrl ? (
-          <img src={item.thumbnailUrl} alt="" loading="lazy" />
-        ) : (
-          <div className="library-preview-placeholder" aria-hidden="true">
-            <svg width="36" height="42" viewBox="0 0 28 30" fill="none">
-              <path d="M4 1H18L25 8V29H4V1Z" stroke="currentColor" />
-              <path d="M18 1V8H25M8 14H21M8 18H21M8 22H17" stroke="currentColor" />
-            </svg>
-            <span>PDF</span>
+    <Tilt
+      className="library-card-tilt"
+      maxTilt={canOpen ? 5 : 0}
+      perspective={900}
+      style={{ willChange: 'auto', transformStyle: 'flat' }}
+    >
+      <TiltContent asChild style={{ willChange: 'auto' }}>
+        <article className="library-document">
+          <button
+            type="button"
+            className="library-preview"
+            onClick={onOpen}
+            disabled={!canOpen}
+            aria-label={`Open ${item.title}`}
+          >
+            {item.thumbnailUrl ? (
+              <img src={item.thumbnailUrl} alt="" loading="lazy" />
+            ) : (
+              <div className="library-preview-placeholder" aria-hidden="true">
+                <svg width="36" height="42" viewBox="0 0 28 30" fill="none">
+                  <path d="M4 1H18L25 8V29H4V1Z" stroke="currentColor" />
+                  <path d="M18 1V8H25M8 14H21M8 18H21M8 22H17" stroke="currentColor" />
+                </svg>
+                <span>PDF</span>
+              </div>
+            )}
+            {item.tourCount > 0 && (
+              <span className="library-tour-badge">
+                {item.tourCount} {item.tourCount === 1 ? 'tour' : 'tours'}
+              </span>
+            )}
+          </button>
+          <div className="library-document-body">
+            {status.kind !== 'ready' && (
+              <StatusBadge label={status.label} tone={status.kind} busy={item.analysisStatus === 'processing'} />
+            )}
+            <h3 title={item.originalFilename}>
+              <button type="button" onClick={onOpen} disabled={!canOpen}>
+                {item.title}
+              </button>
+            </h3>
+            <p className="library-document-meta">
+              {item.pageCount === null
+                ? 'Page count pending'
+                : `${item.pageCount} ${item.pageCount === 1 ? 'page' : 'pages'}`}
+              <span>Added {formatDate(item.createdAt)}</span>
+            </p>
+            {item.analysisError && <p className="library-document-error">{item.analysisError}</p>}
+            <div className="library-document-actions">
+              <button type="button" className="library-open-button" disabled={!canOpen} onClick={onOpen}>
+                Open paper{' '}
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  aria-hidden="true"
+                >
+                  <path d="M4 10h12m-5-5 5 5-5 5" />
+                </svg>
+              </button>
+              {canOpen && item.tourGeneration?.status !== 'ready' && item.tourGeneration && (
+                <TourGeneration
+                  documentId={item.id}
+                  generation={item.tourGeneration}
+                  onChanged={onTourChanged}
+                  canGenerate={analysisReady || !!item.tourGeneration}
+                  onOpenTour={() => onOpen()}
+                  compact
+                  card
+                />
+              )}
+              {item.analysisStatus === 'failed' && canOpen && (
+                <button type="button" className="library-text-button" disabled={busy} onClick={onRetry}>
+                  {busy ? 'Restarting…' : 'Retry analysis'}
+                </button>
+              )}
+              <PaperActions title={item.title} onRename={onRename} onDelete={onDelete} />
+            </div>
           </div>
-        )}
-        {item.tourCount > 0 && (
-          <span className="library-tour-badge">
-            {item.tourCount} {item.tourCount === 1 ? 'tour' : 'tours'}
-          </span>
-        )}
-      </button>
-      <div className="library-document-body">
-        {status.kind !== 'ready' && (
-          <StatusBadge label={status.label} tone={status.kind} busy={item.analysisStatus === 'processing'} />
-        )}
-        <h3 title={item.originalFilename}>
-          <button type="button" onClick={onOpen} disabled={!canOpen}>
-            {item.title}
-          </button>
-        </h3>
-        <p className="library-document-meta">
-          {item.pageCount === null
-            ? 'Page count pending'
-            : `${item.pageCount} ${item.pageCount === 1 ? 'page' : 'pages'}`}
-          <span>Added {formatDate(item.createdAt)}</span>
-        </p>
-        {item.analysisError && <p className="library-document-error">{item.analysisError}</p>}
-        <div className="library-document-actions">
-          <button type="button" className="library-open-button" disabled={!canOpen} onClick={onOpen}>
-            Open paper{' '}
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              aria-hidden="true"
-            >
-              <path d="M4 10h12m-5-5 5 5-5 5" />
-            </svg>
-          </button>
-          {canOpen && item.tourGeneration?.status !== 'ready' && item.tourGeneration && (
-            <TourGeneration
-              documentId={item.id}
-              generation={item.tourGeneration}
-              onChanged={onTourChanged}
-              canGenerate={analysisReady || !!item.tourGeneration}
-              onOpenTour={() => onOpen()}
-              compact
-              card
-            />
-          )}
-          {item.analysisStatus === 'failed' && canOpen && (
-            <button type="button" className="library-text-button" disabled={busy} onClick={onRetry}>
-              {busy ? 'Restarting…' : 'Retry analysis'}
-            </button>
-          )}
-          <PaperActions title={item.title} onRename={onRename} onDelete={onDelete} />
-        </div>
-      </div>
-    </article>
+        </article>
+      </TiltContent>
+    </Tilt>
   );
 }
 
