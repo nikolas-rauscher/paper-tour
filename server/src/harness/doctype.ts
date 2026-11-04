@@ -1,6 +1,6 @@
 import type { Doc } from '../../../shared/paper';
 
-// What kind of document the tour explains (docs/architecture.md, stage A). The card call classifies it from the document
+// What kind of document the tour explains. The card call classifies it from the document
 // itself; the type chooses the arc, the tone and the board use of the tour.
 
 export const DOC_TYPES = ['research_paper', 'exercise_sheet', 'lecture', 'contract', 'letter', 'other'] as const;

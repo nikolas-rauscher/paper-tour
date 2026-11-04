@@ -21,7 +21,7 @@ const clip = (text: string, max: number) => (text.length > max ? `${text.slice(0
 
 export const CUE_ACTIONS = ['highlight', 'box', 'arrow', 'circle', 'spotlight', 'note'] as const;
 const NO_BOARD = {};
-/** One short answer for a different document (rule 8): weak models copy format and depth from an example. */
+/** An answer from another document demonstrates the expected format and level of detail. */
 const EXAMPLE = JSON.stringify({
   plan: 'Asks why the learning rate warms up. p4.s7 gives the reason and eq2 the schedule.',
   answerable: 'yes',

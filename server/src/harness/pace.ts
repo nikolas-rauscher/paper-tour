@@ -1,10 +1,7 @@
 import { ProcessingError } from '../errors';
 import type { Effort } from './calls';
 
-// How long the tour writer lets things take. A learner is waiting for the first step,
-// and a tour is written in parallel, so one slow call or one step that keeps failing its board holds up everything
-// after it. The limits come from the calls measured in real runs: a step took 7.5 s at the median, 21 s at the 90th
-// percentile and 59 s at the 99th; a single call at low reasoning effort took at most 25 s, one at medium effort 41 s.
+// Timeouts and repair budgets for guided generation. Calls run in parallel with bounded retries.
 
 /** The time limits of a generation; tests replace them to make a slow call cheap to provoke. */
 export interface Pace {
@@ -19,10 +16,7 @@ export interface Pace {
   stepMs: number;
   /** The least time a repair call gets, however little is left of the step's time. */
   repairMs: number;
-  /**
-   * The waits before a call the provider could not take (a 5xx or a 429) is sent again, one per retry. Its outages come
-   * in bursts of several seconds, which the callers' own quick retries all fell into: 9 steps of 10 tours in one burst.
-   */
+  /** Delays between retries for transient provider errors (5xx or 429), in milliseconds. */
   outages: readonly number[];
 }
 

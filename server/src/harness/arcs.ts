@@ -7,7 +7,7 @@ import { DOC_TYPE_HELP, type DocType } from './doctype';
 import { proseSentences } from './paper-block';
 import { equationIds, figureIds, idEnum } from './schema-budget';
 
-// Tours of documents that are neither papers nor exercise sheets (docs/architecture.md, stage B with the model): one call
+// Tours of documents that are neither papers nor exercise sheets: one call
 // picks the points each chapter of the type's arc makes, with evidence; code turns them into beats.
 
 export type ArcType = Exclude<DocType, 'research_paper' | 'exercise_sheet'>;

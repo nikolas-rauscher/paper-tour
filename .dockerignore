@@ -15,3 +15,13 @@ supabase/.branches
 .DS_Store
 .data
 coverage
+
+# Local development clients and task artifacts.
+.agents
+.codex
+.claude
+.devtools
+motion-studio
+openscreen-demo-plan.md
+skills-lock.json
+/components.json

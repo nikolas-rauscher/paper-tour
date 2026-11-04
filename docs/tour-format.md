@@ -1,6 +1,5 @@
 # Document and tour format
 
-
 Tours reference source elements by ID; the player resolves their PDF coordinates from `doc.json`. To point
 inside a figure without a panel ID, a tour gives a `region` normalised to the target's bbox (`[0, 0, 0.5, 1]` is the
 left half).
@@ -64,6 +63,5 @@ unless `persist` is set; `clear` removes persistent ones.
 | `distribution` | One or two distributions from parameters or document counts, morphing from one to the other; the probability of a shaded region is computed by code | dist, region |
 
 Narration uses the selected speech provider or pre-rendered step `audio` with optional per-word timings. See [Reading and audio](reading-and-audio.md).
-
 
 Agent-authored `program` and `plotly` visuals extend the native board catalog. See [Visual explanations](visuals.md) for their execution and validation contracts. The schemas in [`schema/`](../schema/) and shared TypeScript types in [`shared/`](../shared/) define the accepted formats.

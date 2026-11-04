@@ -8,4 +8,4 @@ Keep persisted contract changes compatible with saved documents and tours, or pr
 
 New visual kinds need mathematical/geometry checks and playback coverage. The extension points are described in [Visual explanations](docs/visuals.md#adding-a-native-visual-kind). Preserve pause, seek, cancellation and account-ownership behavior when changing a workflow.
 
-Keep generated runs, PDFs, credentials, local environments and personal tooling under ignored local paths. Public documentation should describe current behavior; dated measurements belong in [Evaluation](docs/evaluation.md) with their limitations.
+Keep generated runs, PDFs, credentials, local environments and personal tooling under ignored local paths. Public documentation should describe supported behavior and reproducible setup.

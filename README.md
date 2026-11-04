@@ -6,9 +6,7 @@
 
 **A document tutor that points, draws, and explains.**
 
-Reading a difficult paper often means jumping between the prose, an equation, a figure and another tab with an explanation. Paper Tour brings the explanation onto the page. It reads with you, highlights the passage being discussed, and builds visual explanations beside the original document.
-
-Upload a PDF, choose how you want it taught, and start a guided tour. Pause to ask about a sentence, select part of a diagram, or change a mathematical example through a follow-up question. The source stays in view.
+Paper Tour turns PDFs into narrated explanations with source highlights and interactive visuals. Upload a paper, choose the depth of explanation, and follow its ideas on the page. Pause to ask about a passage, select part of a diagram, or explore a mathematical example beside the original document.
 
 [Get started](#run-locally) · [Architecture](docs/architecture.md) · [Development](docs/development.md)
 
@@ -51,7 +49,7 @@ Click a screenshot to open it at full size.
   </tr>
 </table>
 
-## Read it. Hear it. Work through it.
+## Features
 
 - **Choose your explanation.** Organize a tour by concepts, as an overview, or in paper order. Set explanation depth and reader familiarity separately; save your own teaching profiles.
 - **Follow the source.** The reader moves between passages, figures and equations as the narration reaches them. Highlights and annotations refer to the PDF's own elements.
@@ -60,11 +58,11 @@ Click a screenshot to open it at full size.
 - **Read aloud.** Listen to source prose with synchronized highlighting and explanations of figures, tables and equations. Pause, seek, change the voice or return to a saved tour.
 - **Keep your place.** Saved tours, document conversations and reading progress belong to your account. Completed leading chapters can play while the rest of a tour is still being written.
 
-Research papers, lecture slides, exercise sheets, contracts and letters use different teaching structures. A slide deck follows its slides; an exercise can pause for a try-first checkpoint before revealing a solution.
+The default tour agent is designed for research papers. An optional [guided engine](docs/architecture.md#guided-engine) provides separate workflows for lecture slides, exercise sheets, contracts and letters, including try-first checkpoints for exercises.
 
 ## Built with Meta's Muse models
 
-Muse supplies the language and visual reasoning. The application supplies document geometry, executable tools, durable state and playback.
+Muse generates explanations and visuals from document text and PDF images. Paper Tour connects those outputs to source locations, validates them, and plays them alongside the document.
 
 | Model | Role in Paper Tour |
 | --- | --- |
@@ -73,7 +71,7 @@ Muse supplies the language and visual reasoning. The application supplies docume
 | **SAM 3.1** (`sam-3.1`) | Refines a dragged selection into the object inside it. If the result is unsuitable, the reader keeps the original rectangle. |
 | **Muse Voice Transcribe 1.0** | Turns a spoken question into editable text before the learner sends it. Document terms and language can guide transcription. |
 
-Model selection checks live account availability when available; a static catalog is used when discovery is unavailable. Contributor variants require explicit consent. Narration uses a separate speech layer: browser voices by default, local Siri on supported Macs, or optional ElevenLabs/OpenAI connections.
+Model selection checks the connected account’s available models, with a bundled catalog as fallback. Contributor variants require explicit consent. Narration uses a separate speech layer: browser voices by default, local Siri on supported Macs, or optional ElevenLabs/OpenAI connections.
 
 ## How we built it
 
@@ -94,7 +92,7 @@ flowchart TD
 
 **Source IDs connect the model to the page.** Ingestion assigns stable IDs to sentences, equations, figures and other elements. Tour actions reference these IDs, and the reader resolves their PDF geometry. Region selections and authored visual scenes can also carry coordinates; the model does not have to guess where a source sentence sits.
 
-**Tour generation survives a closed tab.** The default tour agent uses the Vercel AI SDK with Meta Responses. Each durable job advances one model step. Seven scoped tools let it read the paper, inspect visual evidence, build a plan and publish chapters. Postgres and pg-boss keep checkpoints, tool results and recovery state. Pause, Resume and Cancel operate on that saved work.
+**Tour generation survives a closed tab.** The default tour agent uses the Vercel AI SDK with Meta Responses. Each durable job advances one model step. Its tools read source passages, inspect figures, build a plan and publish chapters. Postgres and pg-boss keep checkpoints, tool results and recovery state. Pause, Resume and Cancel operate on that saved work.
 
 **Visuals are executed and inspected.** Native boards render typed formulas, charts and scenes. For a custom explanation, Muse can author an SVG program or a restricted Plotly figure. QuickJS isolates program execution; validation, numerical checks and rendered review feed repairs before publication. Required visual failures retain the work for correction.
 
@@ -155,11 +153,11 @@ CI runs the build and unit suites on pull requests and pushes to `main`. Databas
 - [Architecture](docs/architecture.md) and [document/tour format](docs/tour-format.md)
 - [Visual explanations](docs/visuals.md), [reading and audio](docs/reading-and-audio.md), and [interface](docs/interface.md)
 - [Local PDF workflows](docs/document-workflows.md)
-- [Recorded evaluation](docs/evaluation.md) and [contributor credits](docs/credits.md)
+- [Credits and licenses](docs/credits.md)
 - [Contributing](CONTRIBUTING.md)
 
 ## Data and limitations
 
-Uploads are stored in a private, account-scoped library. Generation sends document text and rendered images to Meta; cloud speech sends narration text to the selected provider. This is not an offline-only application. Personal provider keys are stored server-side through Supabase Vault.
+Uploads are stored in a private library scoped to your account. Generation sends document text and rendered images to Meta; cloud speech sends narration text to the selected provider. Personal provider keys are stored server-side through Supabase Vault.
 
-Generated explanations can be wrong. Source links, mathematical checks and visual review make results easier to inspect; they do not prove every claim or explanation correct. Scanned-document quality depends on OCR. Contract and letter explanations describe the document and do not provide legal advice. Historical timings in the evaluation notes describe specific older runs, not a current performance guarantee.
+Generated explanations can be wrong. Check important claims against the linked source; mathematical checks and visual review cover only supported cases. Scanned-document quality depends on OCR.

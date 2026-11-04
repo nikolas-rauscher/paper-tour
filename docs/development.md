@@ -90,7 +90,7 @@ From the repository root, inspect the resulting run with:
 node scripts/scorecard.mjs .data/runs/mydoc
 ```
 
-The script reads saved artifacts and makes no provider calls. See [recorded evaluation](evaluation.md) for the older measurements and their limitations. Other ingestion utilities include `validate.py`, `outline.py`, `check_tour.py` and the [local PDF workflows](document-workflows.md).
+The script reads saved artifacts and makes no provider calls. Its counts describe the saved run; source references and output completeness still need inspection. Other ingestion utilities include `validate.py`, `outline.py`, `check_tour.py` and the [local PDF workflows](document-workflows.md).
 
 ## Docker deployment
 

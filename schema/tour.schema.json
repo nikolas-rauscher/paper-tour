@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "paper-tour/tour@0.1",
   "title": "Paper Tour script",
-  "description": "A narrated walkthrough of one paper. Steps refer to doc.json elements by ID only, never by coordinates; the player resolves IDs to rects. A hand-written tour and an LLM-written tour use the same format.",
+  "description": "A narrated document walkthrough. Source actions reference doc.json element IDs with optional normalized regions. Boards carry their own visual geometry.",
   "type": "object",
   "required": [
     "schema",
@@ -20,7 +20,7 @@
     },
     "paper": {
       "type": "string",
-      "description": "Folder name of the paper under demo/, e.g. \"attention\"."
+      "description": "Document identifier matching the id in doc.json."
     },
     "doc_sha256": {
       "type": "string",
@@ -47,7 +47,7 @@
         "standard",
         "deep"
       ],
-      "description": "Length the tour was written for: quick (about 6 steps), standard (about 10-12) or deep (up to 24)."
+      "description": "Generation preset. Step count depends on the document and teaching configuration."
     },
     "suggested_questions": {
       "type": "array",

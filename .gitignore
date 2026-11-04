@@ -1,7 +1,7 @@
 .DS_Store
 __pycache__/
 *.pyc
-ingest/.venv/
+ingest/.venv
 player/node_modules/
 player/dist/
 .claude/
@@ -26,3 +26,5 @@ supabase/.branches/
 .agents/
 openscreen-demo-plan.md
 skills-lock.json
+/motion-studio/
+/components.json

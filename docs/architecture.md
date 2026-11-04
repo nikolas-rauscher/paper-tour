@@ -20,7 +20,7 @@ The application sends text and source images to the configured provider. Respons
 
 ## Durable tour generation
 
-New tours normally use `PaperAgent`. Its teaching profile captures structure, explanation depth, audience familiarity and optional custom instructions. Saved generations retain their selected engine and effective profile.
+New tours normally use `PaperAgent`, whose instructions and source context are designed for research papers. Its teaching profile captures structure, explanation depth, audience familiarity and optional custom instructions. Saved generations retain their selected engine and effective profile.
 
 One queued job advances one model step. Tools return validated state transitions; the durable journal commits changes and results. A read/write classification permits compatible read operations while serializing state changes.
 
@@ -40,9 +40,9 @@ Postgres and pg-boss own job claims, checkpoints and recovery. A closed tab does
 
 Entry points: [`generation/runtime.ts`](../server/src/generation/runtime.ts), [`agent/runner.ts`](../server/src/agent/runner.ts), [`agent/store.ts`](../server/src/agent/store.ts), [`agent/tools/`](../server/src/agent/tools/), [`ai/response-agent.ts`](../server/src/ai/response-agent.ts), [`queue.ts`](../server/src/queue.ts).
 
-### Earlier guided engine
+### Guided engine
 
-`PAPER_AGENT_ENABLED=false` selects the guided harness for new generations. It plans the document, authors explanations and visuals, and assembles a saved tour. Profile-based paper tours use a source-grounded teaching map with contribution, prerequisite, mechanism, evidence and limitation roles. Stable concept IDs connect prerequisites and citations; validation rejects missing sources, cycles and incomplete visual decisions.
+`PAPER_AGENT_ENABLED=false` selects the guided harness for new generations. It provides document-specific workflows for papers, lecture slides, exercise sheets, contracts and letters: plan the document, author explanations and visuals, then assemble a saved tour. Profile-based paper tours use a source-grounded teaching map with contribution, prerequisite, mechanism, evidence and limitation roles. Stable concept IDs connect prerequisites and citations; validation rejects missing sources, cycles and incomplete visual decisions.
 
 The guided workspace retains content-addressed provider drafts, direction repairs and inspected visuals within a generation. A cached provider draft must still pass validation. An explicit retry can reuse the same generation's compatible work; a new generation starts a fresh workspace. Failed required visuals in profile jobs cannot be silently removed to publish a finished summary. Older profileless jobs retain their recorded degradation behavior.
 
@@ -52,7 +52,7 @@ Entry points: [`harness/generator.ts`](../server/src/harness/generator.ts), [`te
 
 Q&A is a separate structured-answer workflow. The service resolves the document analysis, selected model, question, optional region and conversation context. Deterministic retrieval ranks source passages. The author receives source text and images from the original PDF, writes a short answer tour, and passes it through grounding, narration and visual checks. Checked steps can stream to the reader before the whole answer is complete.
 
-Questions share contracts and visual inspection/repair with generation, but do not run the persistent tour agent's seven-tool loop. Conversations and visual revisions persist independently of saved tours. Returning to the tour preserves its paused playback position.
+Questions share tour contracts and visual inspection with generation, and use their own structured-answer workflow. Conversations and visual revisions persist independently of saved tours. Returning to the tour preserves its paused playback position.
 
 | Module | Responsibility |
 | --- | --- |
