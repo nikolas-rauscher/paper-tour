@@ -1,7 +1,8 @@
 # Use cases
 
-Where Paper Tour is worth taking beyond research papers and exercise sheets, and in what order. The product is in
-[PLAN.md](PLAN.md), the model harness in [HARNESS.md](HARNESS.md).
+Design exploration from October 2026. This includes proposed features; it is not a list of current capabilities. See the [README](../README.md) for the implemented app.
+
+Proposed directions beyond research papers and exercise sheets, ranked during the original exploration. For the older generation engine, see [Guided harness](HARNESS.md).
 
 ## Summary
 
@@ -147,7 +148,7 @@ rows can use, from paper leases to leaflets, manuals and forms.
 
 ## Pitch teasers
 
-The demo in PLAN.md ends with one teaser, a rental contract. We suggest two that show more range, about 15 seconds
+The historical demo plan ends with one teaser, a rental contract. We suggest two that show more range, about 15 seconds
 each. Both questions are spoken, so both use Muse Voice Transcribe.
 
 1. **"A letter, in your language."** A phone photo of a German letter that we write ourselves, so there are no rights

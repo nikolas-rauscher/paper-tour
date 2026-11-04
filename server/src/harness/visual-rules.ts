@@ -3,7 +3,7 @@ import { evaluateExpression, parseExpression, type PlotItem } from '../../../sha
 import type { Beat } from './beats';
 import type { BoardCheck, FlowItem } from './board';
 
-// Rules a tour step's top-level board must meet to show something real (notes/ROADMAP.md, wave 1). The board checks in
+// Rules a tour step's top-level board must meet to show something real. The board checks in
 // board.ts hold for every caller (tours, worked examples, answers); these only apply to the board of a tour step, and
 // each problem is worded as an instruction for the repair turn.
 

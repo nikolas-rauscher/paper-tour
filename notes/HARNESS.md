@@ -1,8 +1,10 @@
-# Harness
+# Guided harness
+
+This describes the older guided generator, selected with `PAPER_AGENT_ENABLED=false`. New library tours use the persistent agent by default; see [Generation architecture](GENERATION-ARCHITECTURE.md). Historical timings below describe earlier revisions.
 
 How Paper Tour drives Meta's models. The goal is correct, short, well-directed tours and answers from Muse Spark, a
 capable but not frontier model. Every call is small, constrained and checkable, and the harness, not the model,
-guarantees structure, IDs, geometry, timing and safety. The product plan is in [PLAN.md](PLAN.md).
+checks structure, IDs, geometry and timing. The [README](../README.md) describes the current application.
 
 ## Architecture and extension points
 
@@ -288,7 +290,7 @@ the student's own work.
   - 60k output including reasoning: about $0.26;
   - in total about $0.50.
 - **Rough latency:**
-  - a whole tour took 45 to 120 s in the seven real runs in [STATUS.md](STATUS.md);
+  - a whole tour took 45 to 120 s in the seven real runs recorded in the historical status log (available in Git history);
   - the first step is announced as soon as it is written, without waiting for the plan of the whole tour;
   - concurrency is capped at 6 calls, and 429 responses are retried with backoff.
 

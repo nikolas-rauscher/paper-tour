@@ -8,7 +8,7 @@ import { MOVE_SPECS, type Move } from './moves';
 import { proseSentences } from './paper-block';
 import { equationIds, figureIds, idEnum } from './schema-budget';
 
-// A paper tour organised by claims (notes/ROADMAP.md, wave 2): the 2 to 4 statements the authors make in at least two of
+// A paper tour organised by claims: the 2 to 4 statements the authors make in at least two of
 // the abstract, the introduction and the conclusion. Each claim is taught as what changed, why it works, the evidence
 // with its scope and, where the authors state one, the catch. One call picks the claims from sentences that code
 // found in those three places; code checks every ID, the places and the ownership of evidence, and builds the beats.

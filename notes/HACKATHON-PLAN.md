@@ -1,5 +1,7 @@
 # Hackathon plan (2026-10-29)
 
+Historical planning notes, not current setup instructions or verified event rules. Old demo/preflight tooling mentioned below has been removed. Check the official event requirements before submission; project provenance is tracked in [Provenance](../docs/provenance.md).
+
 **The event:** Meta Global AI Developer Hackathon with Cerebral Valley, virtual, $1M.
 - Submissions are due **Wed Nov 4, 9 PM ET**, which is Thu Nov 5, 3 AM in Berlin. Plan to submit by Nov 4, 18:00 Berlin.
 - Judging runs Nov 5-8, and the top 5 per track demo live at the Nov 9 final.
@@ -26,7 +28,7 @@
 
 1. **Provenance.** The first commit (10-26 17:37 Berlin, 37 minutes after the 12:00 ET kickoff) already holds ingestion, both schemas, the player and a 38-step tour. If any of it predates the kickoff, disclose it. Either way, add a README "Provenance" section: dates, authors, libraries.
 2. **Credits and track.** Each person claims their own $150 Meta credits before the deadline (a card is needed). Confirm the Indie track and the theme.
-3. **Name.** Pick from NAMES.md (Nib, Penlight, Lupe); "Paper Tour" undersells sheets, slides and manuals.
+3. **Name.** The repository currently uses Paper Tour.
 4. **The story.** The opening needs Aaron's own moment: a paper or sheet that cost him hours, and why a chat did not help.
 
 ## Positioning

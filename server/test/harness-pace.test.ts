@@ -33,7 +33,7 @@ import {
 import { tableViews } from '../src/harness/tables';
 import { PACE, limited, outlasting, type Pace } from '../src/harness/pace';
 
-// The first step arrives sooner (notes/ROADMAP.md, "no waiting"): the opening step of a paper has its visual planned alone,
+// The first step arrives sooner: the opening step of a paper has its visual planned alone,
 // ahead of the plan of the whole tour; the plan keeps that choice and counts it toward the tour's limits; a call that
 // outlives its time is tried again lean, and a step stops repairing its board once it has used its time.
 

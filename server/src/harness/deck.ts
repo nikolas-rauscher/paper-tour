@@ -3,7 +3,7 @@ import type { Doc } from '../../../shared/paper';
 import type { Beat, PlanChapter, Preset, TourPlan } from './beats';
 import type { PaperCard } from './card';
 
-// A lecture deck is planned slide by slide in its own order (notes/ROADMAP.md, wave 2): the title, the agenda, the thanks
+// A lecture deck is planned slide by slide in its own order: the title, the agenda, the thanks
 // and the references are skipped, trivial neighbours merge into one step, and every step is narrated as the lecturer
 // would say it: the slides are connected into a story, the point is explained, the bullets are never read. Code reads each
 // page of doc.json into a slide card; one call plans the steps from the cards; code checks the plan and builds the beats.

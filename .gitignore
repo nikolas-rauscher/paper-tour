@@ -4,14 +4,7 @@ __pycache__/
 ingest/.venv/
 player/node_modules/
 player/dist/
-demo/*/_debug/
-demo/_fixture/
 .claude/
-
-# Papers are downloaded and their doc.json and figures are generated, so only tours are committed.
-demo/*/paper.pdf
-demo/*/doc.json
-demo/*/figures/
 
 # Local application configuration and runtime state.
 .env
@@ -24,5 +17,6 @@ supabase/.branches/
 .data/
 .devtools/
 
-# Original synthetic demo/test assets generated locally.
-demo/local-*/
+# Retired demo assets and local experiment responses. Store new runs under .data/.
+/demo/
+/server/kinds-*.json

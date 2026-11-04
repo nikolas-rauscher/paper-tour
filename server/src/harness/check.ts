@@ -9,7 +9,7 @@ import { readsSource } from './insight';
 import type { Move } from './moves';
 import { idEnum } from './schema-budget';
 
-// Quick checks (notes/ROADMAP.md, learning): at the end of a chapter of a paper or a lecture that teaches a mechanism or
+// Quick checks: at the end of a chapter of a paper or a lecture that teaches a mechanism or
 // a result, the tour stops and asks the learner to predict or recall one thing the chapter just showed, with up to three
 // hints. It uses the checkpoint of an exercise sheet (the tour waits; the next step reveals) but it is practice, never a
 // grade: nothing is scored and no answer is called wrong. One small call per chapter writes it from what the chapter

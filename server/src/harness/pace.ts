@@ -1,7 +1,7 @@
 import { ProcessingError } from '../errors';
 import type { Effort } from './calls';
 
-// How long the tour writer lets things take (notes/ROADMAP.md, "no waiting"). A learner is waiting for the first step,
+// How long the tour writer lets things take. A learner is waiting for the first step,
 // and a tour is written in parallel, so one slow call or one step that keeps failing its board holds up everything
 // after it. The limits come from the calls measured in real runs: a step took 7.5 s at the median, 21 s at the 90th
 // percentile and 59 s at the 99th; a single call at low reasoning effort took at most 25 s, one at medium effort 41 s.

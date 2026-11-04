@@ -1,297 +1,12 @@
 # Paper Tour
 
-Paper Tour turns any document into a tutor that reads it with you. It points at the exact sentence, outlines the exact
-part of a figure, draws checked visuals on a board beside the page, and answers spoken or typed questions the same way:
-not with a block of chat text, but with a short tour on the page itself. It works on research papers, lecture slides,
-exercise sheets and practical documents such as leases and official letters. Every highlight and outline lands on
-something that exists on the page, because the tour is built from the document's own geometry and names elements by ID,
-never by coordinates.
+Paper Tour reads PDFs with you. It narrates the document, highlights passages, explains figures and equations, and answers questions with annotations and visual explanations beside the page.
 
-## How it works
+Upload a research paper, lecture deck, exercise sheet or practical document. Read it aloud, create a guided tour with a teaching profile, or ask about a selected passage or figure. Documents, tours and conversations belong to the signed-in account.
 
-```
-PDF ─▶ ingestion ─▶ doc.json: sentences, blocks, figures, panels, equations, exercise tasks
-                    every element has an ID and exact coordinates
-                              │
-      plan (Muse Spark):      source-grounded concepts · slide groups of a deck · parts of an exercise sheet
-                              │
-      visual plan (Spark):    choose source annotations or a useful live construction for each explanation
-                              │
-      direct (Spark):         one small call per step, in parallel, choosing only from the IDs listed for it
-                              │
-      checks and review ────▶ targeted repair; incomplete profile explanations cannot publish as complete
-                              │
-                    tour.json: chapters of steps made of IDs and board data
-                              │
-      reader (pdf.js):        camera, pen and board move with the narration, word by word
-```
+## Run locally
 
-1. **Ingestion** (`ingest/`, Python and PyMuPDF) turns the PDF into `doc.json`. Every sentence, block, section, figure,
-   table, panel and equation gets an ID and exact coordinates, and exercise sheets also get task and part IDs. Before a
-   figure is taught, local OCR and OpenCV (`ingest/visual_targets.py`) measure the modules inside it, so a pen mark can
-   enclose one part of a diagram instead of guessing a box.
-2. **Planning.** The model reads the document and names its type, key figures and chapter titles; code detects its
-   language. Profile-based paper tours then build a complete, source-grounded teaching map before narration starts:
-   contribution, prerequisites, mechanisms, evidence and limitations. The chosen profile determines the organization
-   and emphasis. Complexity determines the number of explanations, with no fixed concept count. Large plans span
-   multiple responses without losing content. A slide deck follows slides; an exercise sheet follows tasks. Visual
-   planning chooses source annotations or new constructions by explanatory value, without a required board share.
-3. **Directing.** Each step is written by its own small call, run in parallel. The output is constrained to a JSON
-   schema whose targets are enums of the IDs listed for that step, so the model picks a sentence, a figure or a panel
-   but never writes a coordinate. A detail step waits for the overview it builds on and is told not to repeat it.
-4. **Checks in code.** Code checks every step:
-   - **Grounding.** Every ID exists. Numbers on a document board (bars, scatter, heatmap) must be printed in the
-     evidence the model was shown; any other values must be labelled illustrative.
-   - **Arithmetic.** Plot, heatmap and formula expressions go through a safe expression grammar, never `eval`. Solution
-     lines of an exercise are evaluated numerically (`ok`, `failed` or `unknown`) and a line that cannot be checked is
-     marked unverified.
-   - **Repetition.** A step that repeats the overview it builds on is written again. Profile tours can reuse a valid
-     formula or construction with a different focus; the host does not silently remove it for repeating a board kind.
-   - **Paraphrase.** A step that mostly restates the sentences it highlights is sent back once, to explain why instead.
-   - **Publication.** Profile tours must complete their planned explanations and selected visuals. A persistent fault
-     leaves completed work saved and reports an interrupted generation, rather than substituting a brief summary or
-     stripping the failed visual. Older profileless jobs retain their recorded degradation behavior.
-5. **The reader** (`player/`, React and pdf.js) plays the tour. The camera flies between targets, pen marks are drawn
-   as the narration reaches them, highlights follow the sentence being spoken, and the board animates a formula built
-   term by term, bars, plots, heatmaps and the rest. Narration is the browser's speech synthesis, since Meta's API has
-   no text-to-speech. A question pauses the tour; the answer plays as a short tour of its own, then you go back.
-
-## Meta models it uses
-
-| Model | What it does here | What we found |
-|---|---|---|
-| Muse Spark 1.3 (`muse-spark-1.3`, the default) | Reads the document with its page and figure images, plans, plans the visuals, directs every step and answers questions | Constrained JSON output keeps IDs to the listed enums; a tour took 10 to 20 model calls in the seven runs below |
-| SAM 3.1 (`sam-3.1`) | Snaps a learner's loose drag over a figure to the object inside it, drawn as its outline | 42 of 46 snaps were correct in the spike, median 1.2 s. Guards on confidence, overshoot, size and ink keep the learner's rectangle when a snap looks wrong |
-| Muse Voice Transcribe 1.0 | Hold-to-talk questions: the transcript appears in the question field, editable, and Ask sends it | 16 kHz mono WAV in, text out; nothing is stored |
-| Muse Wonder 1.0 | Listed as a tour-compatible model, but no stage uses it by default | See below |
-
-Muse Wonder was tried as the director of the whole tour's visuals ([notes/META-MODELS.md](notes/META-MODELS.md)). At its
-default effort it ran out of tokens on the plan (73 s, truncated). With a reasoning effort set every call returned a
-valid plan in 15 to 28 s for $0.03 to $0.07, but Muse Spark returned equally valid plans in 5.5 s for $0.007, so Spark
-stays the planner. Muse Image is not used.
-
-## What it is not
-
-- **More than a chat with a PDF.** Questions have saved document conversations, and each answer can play as an
-  explanation on the page that points, draws and changes a live mathematical construction.
-- **Not a basic RAG app.** Tours are not retrieved from chunks. The whole document is planned, every step is tied to
-  IDs and geometry, and the model's visuals are checked by code. Questions do retrieve passages from the one open
-  document, but what comes back is pointing and drawing, not a paragraph.
-- **Not advice.** For leases, terms and letters it explains what the text says, with amounts and dates as written. A
-  contract tour says at its start and end that it explains and does not advise, and its narration is instructed never
-  to recommend whether to sign.
-- **Not a replacement for the document.** The page stays on screen the whole time, and every claim points back to it.
-
-## Document types
-
-| Type | How it is taught |
-|---|---|
-| Research papers | By claim: what changed, why it works, the evidence with its scope, the catch. Figures are taught on the figure itself; tables become scatter, bars or heatmaps of the paper's own numbers |
-| Lecture slides | Slide by slide in a filmstrip, skipping title and agenda slides and connecting the rest into a story |
-| Exercise sheets | Per task: the task, a try-first checkpoint with up to three hints, then the solution line by line on the board, each line checked in code where it can be |
-| Practical documents (contracts, leases, terms, letters, forms) | Plain words, neutral tone, amounts and dates exactly as written, framed as an explanation and not advice |
-
-The tour is written in the document's dominant language (a German sheet gets German narration). A question can ask for
-the answer in another language, with quotes kept in the original. The measured runs below
-include a lease, terms of service and a German letter.
-
-## Measured results
-
-Ten documents, one run each, on 2026-10-30: four papers (machine translation, a robot fish, quantum field theory,
-ant ecology), one lecture deck, two exercise sheets (English probability, German linear algebra), a 63-page UK
-tenancy agreement, a terms-of-service document and a German data-protection letter. All with `muse-spark-1.3`, the
-`standard` preset and prompt version `paper-tour-harness@33`. This is ten documents, not a benchmark: there is no
-baseline, no repeated run and no human rating. The PDFs are not in the repository; `attention` is the paper of the
-demo tour (from another run).
-
-The numbers come from `node scripts/scorecard.mjs`, which reads the finished tours and makes no model calls:
-
-```
-tour           type      steps  words   min  chap  calls  tok k   usd   secs  resent  degr      ids  lines  back  front
------------------------------------------------------------------------------------------------------------------------
-attention      paper        11    526   3.5     4     15    217  0.34   71.2       1     0    37/37      -     0      0
-eval-fish      paper        14    726   4.8     5     21    332  0.50  103.6       4     1    43/43      -     2      0
-eval-casimir   paper        14    684   4.5     5     18    348  0.53   84.8       1     0    41/41      -     0      0
-eval-ants      paper        14    674   4.4     5     19    348  0.51  145.8       2     1    42/42      -     0      0
-eval-slides    lecture      12    923   6.0     4     16    212  0.38  115.7       3     2    60/60      -     1      0
-eval-sheet-en  sheet        20    840   5.6     7     12    130  0.30   73.8       0     0    56/56   7/13     0      0
-eval-sheet-de  sheet        22    768   5.1     7     12    177  0.38   87.9       0     0    55/55   9/15     0      0
-eval-lease     contract     10    725   4.7     6     15    541  0.77  102.6       3     2    30/30      -     4      0
-eval-terms     contract      9    648   4.2     6     13    221  0.33   90.5       2     1    28/28      -     2      0
-eval-letter    letter        5    312   2.0     4      9     71  0.14   67.7       1     0    17/17      -     0      0
------------------------------------------------------------------------------------------------------------------------
-all 10                     131   6826  44.8    53    150   2597  4.18  943.6      17     7  409/409  16/28     9      0
-
-tour           type      boards  kinds  doc  in text  illus  other  repeat  dropped  checkpoints
-------------------------------------------------------------------------------------------------
-attention      paper          4      4    1        1      2      1       0        0            1
-eval-fish      paper          4      4    1        1      1      2       0        1            1
-eval-casimir   paper          5      5    0        0      3      2       0        0            1
-eval-ants      paper          4      4    1        1      2      1       0        1            1
-eval-slides    lecture        3      3    1        1      2      0       0        1            1
-eval-sheet-en  sheet         10      3    1        1      0      9       0        0            5
-eval-sheet-de  sheet         12      3    0        0      0     12       0        0            5
-eval-lease     contract       5      5    1        1      2      2       0        0            0
-eval-terms     contract       5      4    2        0      0      3       0        0            0
-eval-letter    letter         2      2    0        0      1      1       0        0            0
-------------------------------------------------------------------------------------------------
-all 10                       54     10    8        6     13     33       0        3           15
-
-
-camera page of each step
-attention      2 6 6 8 7 6 7 7 7 7 10
-eval-fish      1 5 5 6 5 4 7 7 7 5 6 8 6 8
-eval-casimir   1 2 3 9 9 9 10 10 10 9 9 10 11 11
-eval-ants      2 5 4 6 6 6 8 8 8 9 10 11 15 16
-eval-slides    3 7 11 13 15 19 20 13 21 25 28 31
-eval-sheet-en  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 1
-eval-sheet-de  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 5
-eval-lease     10 26 36 7 23 17 41 13 17 5
-eval-terms     2 5 7 12 19 17 16 15 1
-eval-letter    1 1 1 1 1
-```
-
-What the numbers say, and what they do not:
-
-- **Every document got a tour.** All ten completed, including the 63-page lease; writing one took 68 to 146 seconds
-  with 9 to 21 model calls, about $0.14 to $0.77 at Muse Spark's list price
-  ([server/src/muse/pricing.ts](server/src/muse/pricing.ts)).
-- **Size.** Papers, the deck and the practical documents took 5 to 14 steps and 2 to 6 minutes of narration. A sheet
-  takes an overview, a takeaway and a try-first checkpoint plus solution steps per exercise, so 20 and 22 steps.
-- **Reading order.** A paper tour reads forward: after its first chapter no step goes back to the abstract or the
-  introduction (`front`), and in 53 steps of the four papers the camera jumps back by more than a page twice (`back`).
-  Before claims were anchored where the paper develops them (2026-10-29, `harness@32`), the same papers went back to
-  the front 12 times and jumped back 9 times. Contracts are read by topic, not in page order.
-- **Diversity.** All ten board kinds appear across the tours; each paper, deck or contract uses 3 to 5 different kinds,
-  and no board repeats the data of an earlier one.
-- **Document values.** Of 54 boards, 8 present numbers as the document's own and 6 more use values printed in the
-  text; 13 are declared illustrative and 33 are equations, flows, functions, timelines or drawings.
-- **Grounding.** All 409 IDs the tours point at exist in `doc.json`.
-- **Checks at work.** The checks sent back 17 drafts, which were written again. Seven steps lost a part and kept their
-  narration (`degr`): three boards (one failed its checks, two took too long to write) and four worked examples the
-  plan had not asked for, which failed their checks. The activity checklist names each with its cause. No step and no
-  tour was lost.
-- **Exercise lines.** Of 28 solution lines, 16 checked as correct, none as wrong, and 12 could not be checked
-  numerically and are marked unverified.
-
-To reproduce a row, write a tour with `server/run-tour.ts` (see the quick start) and run the scorecard on its folder.
-It looks up `doc.json` in `.data/documents/<folder name>`; `--docs <dir>` changes that, and `--json` prints the numbers as JSON.
-
-## Quick start
-
-Use the authenticated private library described in [Local library setup](#local-library-setup).
-Start the API, generation worker and reader with `npm run dev`, then open http://localhost:5174/.
-Upload a PDF and open it to read or create a tour. Local demo routes, bundled tours and offline demo servers have been removed.
-
-Checks: `npm run build` and `npm test`.
-
-## Layout
-
-| Path | What |
-|---|---|
-| `ingest/` | Python: PDF to `doc.json`, figure crops, local figure measurement, math checks, validation, ID outline for authors |
-| `schema/` | `doc.schema.json` and `tour.schema.json`, the two contracts |
-| `shared/` | TypeScript types and checks used by the server and the player: the contracts, board kinds, expressions |
-| `server/` | Fastify API, the worker, the tour writer in `src/harness/`, question answering, SAM snapping, voice, Nikolas's opt-in paper agent |
-| `player/` | Vite, React and TypeScript reader: camera, pen, board, asking, library |
-| `scripts/` | Local setup, smoke and integration tests, `scorecard.mjs` |
-| `notes/` | Plan, status, harness design, Meta model findings, use cases. Start with [notes/HANDOFF.md](notes/HANDOFF.md) |
-
-Tools in `ingest/`:
-
-- `ingest.py <pdf> [--out DIR] [--debug]` writes `doc.json` and `figures/` next to the PDF (or into `--out`). `--debug`
-  also renders every page with all detected elements and their IDs drawn on top, into `_debug/page-NN.png`.
-- `validate.py <folder>` checks `doc.json` and `tour.json` against the schemas, and that every ID the tour uses exists
-  in `doc.json`.
-- `outline.py <folder>` prints sections, figures and every sentence with its ID. Use it when writing a tour by hand.
-- `check_tour.py <folder>/tour.json <out-dir>` renders every step's targets the way the player frames them, one PNG per
-  camera move, and prints the word each timed action fires on.
-
-
-Player keys: `Space` or `K` play and pause, `←` and `→` previous and next step, `Shift` with an arrow previous and
-next sentence, `[` and `]` previous and next chapter, `Home` and `End` first and last step, `R` replay the sentence,
-`M` mute, `H` a hint when you are asked to try, `/` ask a question, `?` the list. `D` shows element IDs; click any
-element in that mode to copy its ID. Use `?silent=1` for timed narration
-without speech, `?rate=4` to run faster while testing. `npm test` in `player/` runs the engine tests.
-
-## The contracts
-
-**The tour never contains coordinates.** It names elements by ID and the player looks up their coordinates in
-`doc.json`. This is what makes model-written tours reliable: models pick IDs well and bounding boxes badly. To point
-inside a figure without a panel ID, a tour gives a `region` normalised to the target's bbox (`[0, 0, 0.5, 1]` is the
-left half).
-
-Coordinates in `doc.json` are PDF points with the origin at the top-left of the page and y growing downward (PyMuPDF's
-convention). A bbox is `[x0, y0, x1, y1]`.
-
-| ID | Example | Points at |
-|---|---|---|
-| block | `p3.b2` | Text block 2 on page 3 (reading order) |
-| sentence | `p3.s12` | Sentence 12 on page 3; `rects` has one rect per line fragment |
-| section | `sec-3.2`, `sec-abstract` | The section's heading block |
-| figure / table | `fig1`, `tab2` | The graphic or table body, by printed number, without the caption |
-| panel | `fig2.a` | A sub-figure, in reading order |
-| equation | `eq1`, `equ2` | A numbered or unnumbered display equation |
-| page | `page4` | A whole page |
-
-Exercise sheets also have task and part IDs in `doc.json` (`ex1`, `ex1.a`) that the planner uses. Steps point at the
-blocks and sentences they cover.
-
-**A tour** has a `title`, the `paper` folder it belongs to, the `doc_sha256` of the `doc.json` it was written against,
-an optional `level`, `voices`, the `preset` it was written for, `suggested_questions` and `left_out` (what the writer
-planned but could not put in, each with its cause, which the reader says on its cards), and `chapters` of steps.
-`doc_type` is `research_paper`, `exercise_sheet`, `lecture`, `contract`, `letter` or `other`; the reader uses it to pick
-its mode, so a lecture plays slide by slide.
-
-**A step** has `say` (the narration), `actions`, an optional `hold_ms` pause, optional pre-rendered `audio` and an
-optional `checkpoint`: `{ prompt, hints }` with up to three hints, from a nudge to almost the answer. A step with a
-checkpoint pauses after its narration so the learner can try first, and the next step reveals the answer.
-
-Actions fire at the start of the step, or at word `at_word` of the narration. Overlays disappear when the step ends
-unless `persist` is set; `clear` removes persistent ones.
-
-| Action | Effect |
-|---|---|
-| `focus` | Scroll the target into view at reading zoom |
-| `zoom` | Fit the target (or a `region` of it) to the viewport |
-| `highlight` | Marker or underline on the text lines of each target |
-| `box` | Outline with an optional label |
-| `spotlight` | Dim everything except the target |
-| `note` | Callout card next to the anchor |
-| `arrow`, `circle` | Hand-drawn pen mark pointing at, or around, the target or a region of it |
-| `clear` | Remove persistent overlays |
-| `board` | Show a board item beside the page; it stays across steps until another item or `board_clear` |
-| `board_focus` | Light up one part of the board item by index |
-| `board_clear` | Remove the board item |
-
-**Board kinds.** The model fills a template with semantic data; code checks it, lays it out and animates it.
-
-| Kind | Shows | `board_focus` part |
-|---|---|---|
-| `formula` | An equation built term by term, each term a coloured substring of the LaTeX | term |
-| `flow` | Boxes and arrows of a pipeline or dependency, revealed in order | node |
-| `bars` | Numbers the document reports, as animated bars | bar |
-| `plot` | Function curves from a safe expression, with an optional parameter sweep, log axes, marks computed by code (roots, extrema, intersections) and data points from the document | curve |
-| `scene` | Positioned vectors, matrices, text, shapes and plots, changing state frame by frame for a worked example | object |
-| `heatmap` | A grid with labelled rows and columns: weights, masks, correlations, ablations. Can show a row-wise softmax, a causal mask or curves between tokens. Its `source` is `document`, `illustrative` or `formula` (the server computes the values) | row |
-| `scatter` | Points on two measured axes, with log axes and a shaded "better" corner, for trade-offs | point |
-| `shapes` | Matrix dimensions through an operation; the code checks that inner dimensions match | matrix |
-| `timeline` | Dated or ordered events, spans and deadlines on one axis; the code resolves relative dates such as "14 days after the notice" and checks span lengths | event, span |
-| `distribution` | One or two distributions from parameters or document counts, morphing from one to the other; the probability of a shaded region is computed by code | dist, region |
-
-Narration uses the browser's speech synthesis unless a step has pre-rendered `audio` (with optional per-word timings).
-
-## Local library setup
-
-The library app adds private uploads, analysis in a worker, model selection with prices and personal Meta keys under
-**Profile & Settings**. It needs Node.js 22.12+ and Python 3.12. Install Tesseract as above. Python requirements include
-OpenCV for measuring diagram components, which runs locally before figure cues are authored.
-
-Uploading a PDF prepares it for reading. Open a new paper to choose its tour type, explanation depth and reader
-familiarity before creating the first tour, or choose **Read PDF first** to browse without starting generation.
-Existing tours remain available; **New tour** creates another version with its own profile.
-Under **Settings → Reading**, a browser-local automatic zoom ceiling keeps tours and answers from zooming in too far
-(200% by default). Manual PDF zoom remains independent.
+Requires **Node.js 22.12+**, **Python 3.12**, and **Tesseract**. The local database, authentication and storage use Supabase.
 
 ```sh
 npm ci
@@ -300,96 +15,58 @@ npm --prefix player ci
 python3.12 -m venv ingest/.venv
 ingest/.venv/bin/pip install -r ingest/requirements.txt
 npm run supabase:start
-npm run setup:local
-```
-
-Optionally set `MODEL_API_KEY` in the root `.env` for shared app access. Users can instead save their own Meta key in
-**Profile & Settings**. Start the app:
-
-```sh
+npm run setup:local -- --skip-siri
 npm run db:migrate
 npm run dev
 ```
 
-Open http://localhost:5174/. Automatic tours send the document's text and rendered page and figure images to Meta.
-`npm run test:integration` needs the local Supabase stack.
+Open [localhost:5174](http://localhost:5174), create a local account, and add a Meta API key in **Profile & Settings**. Alternatively, set `MODEL_API_KEY` in the generated root `.env` and restart the app. Generating tours and answers uses API tokens and sends document text and rendered page/figure images to Meta.
 
-`Dockerfile` and `compose.yaml` provide an optional deployment setup; environment variables are listed in
-`.env.example`. With Colima instead of Docker Desktop, see [notes/HANDOFF.md](notes/HANDOFF.md).
+The setup command creates local environment files and refuses to overwrite existing ones. `--skip-siri` skips the optional Apple voice installation. Browser speech is available without a separate speech API key. See [Development](docs/development.md) for prerequisites, configuration, optional speech providers and Docker deployment.
 
-New tours use the persistent Vercel AI SDK agent loop. Teaching profiles guide its structure, depth and audience;
-source and visual tools validate its work. Completed leading chapters can be played while the agent writes the rest.
-Activity shows readable narration, tool work and timing diagnostics; the floating question bubble also shows progress.
+## What it does
 
-**Create tour** opens reusable teaching profiles: Concept-led (the existing default), Overview, or In paper order.
-Explanation depth and reader familiarity are separate choices; the model stays selected in Settings. Duplicate a
-profile to save custom instructions. Editing creates a revision, while each generation and saved tour keeps its
-effective profile snapshot. Profile APIs are owner-scoped under `/api/tour-profiles`.
+- **Guided tours:** choose the structure, explanation depth and reader familiarity. Play completed leading chapters while generation continues; pause, resume or cancel generation through Activity.
+- **Read aloud:** read source text with synchronized highlighting and explanations of figures, tables and equations.
+- **Questions:** type or dictate a question, select a PDF region, and replay saved answers from document conversations.
+- **Visual explanations:** annotate the source or show formulas, charts and mathematical constructions beside it. Interactive visuals can be revised through follow-up questions.
+- **Speech:** browser voices, local Siri on supported Macs, and optional ElevenLabs or OpenAI speech providers.
 
-Set `PAPER_AGENT_ENABLED=false` to opt new tours into the older guided harness. Active jobs keep their original engine;
-retrying a failed harness tour with the agent enabled creates a new agent run and preserves the old diagnostics.
-The agent uses Meta Responses, saved paper sessions and seven scoped paper tools; its instructions and
-tool schemas are in `server/src/agent/tools.ts`. Runs and tool results are private server-side records. **Activity**
-shows model and tool inputs, results and token usage, with Pause, Resume and Cancel controls. Limits in `.env.example`
-pause work at a checkpoint; resuming grants another budget segment. An uncertain provider dispatch requires explicit
-resume. Provider prompt caching is measured separately from local image and observation reuse.
+## How it works
 
-All model generation and streaming run through Vercel AI SDK 7. Structured tours and questions use `Output.object`; the
-persistent agent uses `ToolLoopAgent` with a single model step per durable job. Postgres and pg-boss own checkpoints and
-tool writes, so reconnecting does not replay writes. Meta's count and retrieve endpoints remain explicit provider
-capabilities, and its nonstandard voice endpoint implements the SDK transcription contract. See
-[the migration plan](notes/VERCEL-MIGRATION.md) for decisions and verification.
+1. Python and PyMuPDF extract text, figures and equations with stable IDs and PDF geometry. Local OCR and OpenCV help locate components inside figures.
+2. A persistent Vercel AI SDK agent reads the document and builds the tour through source-reading, visual-inspection and editing tools. The default model is `muse-spark-1.3`.
+3. Validation checks source IDs, numerical evidence, expressions and rendered visuals. Required visual failures retain saved work for repair rather than publishing an incomplete tour as finished.
+4. The React reader synchronizes PDF navigation, annotations and boards with narration. Questions use the same source and visual tools. SAM 3.1 can refine a selected region; voice questions use Muse transcription.
 
-Generation queue handling is centralized in `server/src/generation/runtime.ts`; the guided generator is bound in
-`generation/generator.ts`. Paper tools are grouped under `agent/tools/` by source reads, visual inspection and tour
-editing. Registering a tool supplies its schema, execution, progress stage and concurrency classification together. See
-[the architecture audit](notes/GENERATION-ARCHITECTURE.md) for real-provider results.
+An older guided harness remains available through `PAPER_AGENT_ENABLED=false`. Saved tours and active jobs retain their original engine. See [Generation architecture](notes/GENERATION-ARCHITECTURE.md), [Durable workspace](notes/GENERATION-WORKSPACE.md) and [Tour format](docs/tour-format.md).
 
-For local SDK timing and token diagnostics, set `AI_SDK_DEVTOOLS=true` and run `npm --prefix server exec -- devtools`.
-Development dependencies are required. Traces contain only metadata: prompts, tool arguments, generated text, raw
-requests and replies and image bytes are omitted. This integration stays disabled in production.
+## Development
 
-Run `npm run test:smoke:muse` for an explicit live test with the configured local test account. It uploads a small
-diagram PDF and checks saved tours, source links and the agent journal when enabled; it uses the profile's selected
-model and consumes API tokens.
+```sh
+npm run build
+npm test
+```
 
-### Questions
+The build checks server and player TypeScript and bundles the player. Tests cover the player, server, Python ingestion and repository scripts. Integration tests require a running local Supabase stack; live smoke tests also consume model tokens. See [test commands](docs/development.md#checks).
 
-A question pauses the tour. Type it, or hold the microphone button beside the field, speak and release: Muse Voice
-Transcribe puts the text in the field, and **Ask** sends it. The answer is a short tour of its own, in the document's
-language or one chosen under **Answer language**; **Back to the tour** returns to where you were.
+| Directory | Contents |
+| --- | --- |
+| `player/` | React PDF reader, library, settings, narration and visual playback |
+| `server/` | Fastify API, generation worker, agent tools and provider integrations |
+| `ingest/` | PDF extraction, figure measurement, document workflows and validation |
+| `schema/`, `shared/` | JSON schemas, TypeScript contracts and shared validation |
+| `supabase/` | Local service configuration and database migrations |
+| `scripts/` | Setup, integration checks and evaluation utilities |
+| `docs/` | Setup, data format, recorded evaluation and UI reference |
+| `notes/` | Technical design notes and dated experiments |
 
-Use the region-selection button beside the question field to ask about an area of a PDF, with or without a tour. The
-reader asks SAM 3.1 to snap your drag to the object inside it and shows the object's outline; if the snap is slow,
-unsure or finds nothing, your rectangle is used and asking never waits. The server sends the crop and the full page from
-the original PDF, alongside document text and conversation context. Pause and continue keep the current narration
-position; stopping a pending question aborts it.
+## Documentation
 
-Questions are saved in **document conversations**, independently of saved tours. Use the conversation button to reopen
-questions or replay an explanation. A live visual can be changed by a follow-up question; its previous revision remains
-available. Returning to the tour keeps its playback position paused.
+- [Development and deployment](docs/development.md)
+- [Document and tour format](docs/tour-format.md)
+- [Technical notes](notes/README.md)
+- [Recorded evaluation and its limits](docs/evaluation.md)
+- [Contributors and project provenance](docs/provenance.md)
 
-For an explanation that benefits from a mathematical construction, the agent can author a live SVG program or an
-interactive Plotly figure, with sliders and host-computed functions. Execution, rendered review and targeted repair
-happen before publication. The existing native visualizations remain available. Architecture, extension points and
-verification are documented in [LIVE-VISUALS.md](notes/LIVE-VISUALS.md) and
-[ADAPTIVE-TEACHING.md](notes/ADAPTIVE-TEACHING.md).
-
-## Provenance and team
-
-> **TO FILL IN (Aaron): only you can state this. Replace this note with the facts.**
->
-> - **Dates.** When the project started, the event kickoff, and the submission. The git history starts on 2026-10-26.
-> - **What existed before the event.** Code, designs, data or experiments, and what is new work.
-> - **Authors and roles.** Everyone who contributed, with what each built. The git history lists Aaron Louis Eidt and
->   Nikolas Rauscher.
-> - **Third-party code, data and documents.** Libraries (pdf.js, PyMuPDF, OpenCV, Tesseract, KaTeX, Vercel AI SDK,
->   Supabase), and the source and licence of every document used in the demo and the results above.
-> - **Anything else the rules ask you to disclose.**
-> - **Licence and name.** There is no LICENSE file yet, and "Paper Tour" is a working name.
-
-## Notes
-
-The plan, the current status and the review findings are in `notes/`: [HANDOFF.md](notes/HANDOFF.md) (start here),
-[STATUS.md](notes/STATUS.md), [ROADMAP.md](notes/ROADMAP.md), [VISUALS-V2.md](notes/VISUALS-V2.md),
-[META-MODELS.md](notes/META-MODELS.md), [HARNESS.md](notes/HARNESS.md), [HACKATHON-PLAN.md](notes/HACKATHON-PLAN.md).
+Generated explanations can be wrong. Source highlighting and mathematical checks help inspect an answer; they do not establish that every claim is correct. Explanations of contracts and letters describe the document and do not provide legal advice.

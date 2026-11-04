@@ -1,4 +1,4 @@
-// Narration moves (notes/ROADMAP.md, wave 2): every step of a claim-organised paper tour has one job in the argument,
+// Narration moves: every step of a claim-organised paper tour has one job in the argument,
 // and the voice follows that job's grammar: the conclusion first, one "because", a number only with the thing it is
 // compared with, and never an echo of the highlighted text. The plan assigns the move; code checks what it can.
 

@@ -1,7 +1,7 @@
 import type { LeftOut, LossCause, Step, Tour } from '../../../shared/paper';
 import type { Direction } from './direct';
 
-// The degrade ladder (notes/ROADMAP.md, wave 1): a tour never fails because of one visual. A step whose board, worked
+// The degrade ladder: a tour never fails because of one visual. A step whose board, worked
 // example or pen marks still fail after their corrections keeps its narration and its page cues and loses only what
 // failed; a step with no usable narration takes the fallback beat. A step whose model calls were too slow is asked for
 // less (generator.ts) before it loses anything. Every loss is recorded with its cause, never silent.
