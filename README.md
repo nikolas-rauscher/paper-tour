@@ -386,7 +386,7 @@ verification are documented in [LIVE-VISUALS.md](notes/LIVE-VISUALS.md) and
 > - **Third-party code, data and documents.** Libraries (pdf.js, PyMuPDF, OpenCV, Tesseract, KaTeX, Vercel AI SDK,
 >   Supabase), and the source and licence of every document used in the demo and the results above.
 > - **Anything else the rules ask you to disclose.**
-> - **Licence and name.** There is no LICENSE file yet, and "Paper Tour" is a working name.
+> - **Licence and name.** See [LICENSE](LICENSE) for the project licence. "Paper Tour" is a working name.
 
 ## Notes
 
