@@ -14,6 +14,12 @@ Paper Tour turns PDFs into narrated explanations with source highlights and inte
 
 A guided tour of loss-free load balancing for mixture-of-experts models: follow the source, inspect reported results, and explore illustrative constructions beside the PDF. The screenshots distinguish paper measurements from illustrative examples.
 
+### More examples — 3-minute video
+
+Watch Paper Tour explain figures, highlight passages and create interactive visual examples alongside the original PDF. The video also shows annotations, reported results and follow-up questions in the reader.
+
+https://github.com/user-attachments/assets/d59f5ddc-c2f4-413c-96b9-63a2045f907e
+
 Click a screenshot to open it at full size.
 
 <table>
