@@ -41,11 +41,6 @@ Click a screenshot to open it at full size.
     <td align="center">
       <a href="docs/images/figure-annotations.png"><img src="docs/images/figure-annotations.png" width="360" alt="Source charts annotated around the legend and computation batch-size labels"></a><br>
       <sub>Figure annotations</sub>
-    </td>
-    <td align="center">
-      <a href="docs/images/bias-feedback.png"><img src="docs/images/bias-feedback.png" width="360" alt="Tour navigation alongside the source algorithm and an illustrative expert-load feedback construction"></a><br>
-      <sub>Tour contents and bias feedback</sub>
-    </td>
   </tr>
 </table>
 
